@@ -10,7 +10,7 @@
 //   xp:     how much XP it gives that organ
 //   fact:   a kid-friendly health fact shown on pickup
 //   color:  the 3D model's main color (hex)
-//   shape:  "sphere" | "carrot" | "berry" | "broccoli" | "mushroom" | "nut"
+//   shape:  "sphere" | "carrot" | "berry" | "broccoli" | "mushroom" | "nut" | "poop"
 //   scale:  size of the 3D model (1 = normal)
 // ============================================================
 
@@ -20,7 +20,8 @@ export const ORGANS = {
   bones:  { name: "Bones",   emoji: "🦴", color: "#ecf0f1" },
   muscles:{ name: "Muscles", emoji: "💪", color: "#e67e22" },
   eyes:   { name: "Eyes",    emoji: "👀", color: "#3498db" },
-  tummy:  { name: "Tummy",   emoji: "🫃", color: "#2ecc71" }
+  tummy:  { name: "Tummy",   emoji: "🫃", color: "#2ecc71" },
+  funny:  { name: "Funny",   emoji: "😂", color: "#f06292" }
 };
 
 export const FOODS = [
@@ -83,6 +84,11 @@ export const FOODS = [
     id: "pear", name: "Pear", emoji: "🍐", organ: "bones", xp: 8,
     fact: "Pears have vitamin K and minerals that help your bones grow tall and tough!",
     color: "#a9c43c", shape: "sphere", scale: 0.95
+  },
+  {
+    id: "poop", name: "Poop", emoji: "💩", organ: "funny", xp: 15,
+    fact: "Hehe... EWW! But guess what — everybody poops! Eating lots of fiber from fruits and veggies keeps your poops healthy. That's how you know your tummy is doing its job!",
+    color: "#7b5230", shape: "poop", scale: 1
   }
 ];
 

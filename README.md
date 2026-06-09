@@ -20,6 +20,9 @@ XP to the organ it helps (carrots → 👀 eyes, blueberries → 🧠 brain, bro
 → 🦴 bones…), and teaches you a real health fact. Picked foods regrow after a
 short while, so the forest never runs out.
 
+Keep an eye out for 💩 poop hiding between the trees — picking it up fills
+your 😂 Funny meter (and sneaks in a lesson about fiber).
+
 ## Running the game
 
 The game is plain HTML/JS (Three.js loaded from a CDN) — no build step.

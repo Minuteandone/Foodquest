@@ -59,6 +59,36 @@ function buildFoodMesh(food) {
       g.add(cap);
       break;
     }
+    case "poop": {
+      // the classic swirl: three squashed scoops getting smaller, plus a tip
+      const scoops = [
+        { r: 0.32, y: 0.18 },
+        { r: 0.24, y: 0.42 },
+        { r: 0.16, y: 0.6 }
+      ];
+      for (const s of scoops) {
+        const scoop = new THREE.Mesh(new THREE.SphereGeometry(s.r, 10, 8), mat);
+        scoop.position.y = s.y;
+        scoop.scale.y = 0.75;
+        g.add(scoop);
+      }
+      const tip = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.18, 8), mat);
+      tip.position.set(0.04, 0.74, 0);
+      tip.rotation.z = -0.4;
+      g.add(tip);
+      // googly eyes, because poop should be funny
+      const eyeWhite = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const eyeBlack = new THREE.MeshBasicMaterial({ color: 0x222222 });
+      for (const side of [-1, 1]) {
+        const white = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), eyeWhite);
+        white.position.set(side * 0.11, 0.45, 0.21);
+        g.add(white);
+        const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.035, 6, 5), eyeBlack);
+        pupil.position.set(side * 0.11, 0.45, 0.27);
+        g.add(pupil);
+      }
+      break;
+    }
     case "nut": {
       const nut = new THREE.Mesh(new THREE.SphereGeometry(0.25, 7, 6), mat);
       nut.position.y = 0.25;
