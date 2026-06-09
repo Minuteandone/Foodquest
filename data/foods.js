@@ -92,6 +92,46 @@ export const FOODS = [
   }
 ];
 
+// Bristol Stool Chart poop types, earned by trading foods at PooPoo Plaza.
+export const POOP_TYPES = [
+  {
+    id: "pebbly", name: "Pebbly", emoji: "🪨💩", bristolType: 1,
+    rarity: "Common", color: "#5c3d20",
+    description: "Hard little separate lumps. You need more fiber and water!",
+    bristolFact: "Bristol Type 1 — hard separate lumps. More fruits, veggies, and water will help!"
+  },
+  {
+    id: "lil_lumpy", name: "Lil Lumpy", emoji: "💩", bristolType: 2,
+    rarity: "Common", color: "#7b5230",
+    description: "Sausage-shaped but lumpy. Getting better — keep eating your veggies!",
+    bristolFact: "Bristol Type 2 — lumpy sausage shape. A bit more fiber and you'll level up!"
+  },
+  {
+    id: "cracked", name: "Cracked", emoji: "💩〰️", bristolType: 3,
+    rarity: "Uncommon", color: "#8B6340",
+    description: "Sausage with cracks on the surface. Nice food variety! Almost perfect.",
+    bristolFact: "Bristol Type 3 — sausage with cracks. Very healthy — great food variety!"
+  },
+  {
+    id: "sigma_smooth", name: "Sigma Smooth", emoji: "💩✨", bristolType: 4,
+    rarity: "Rare", color: "#9B7355",
+    description: "Smooth, soft, and ideal! Your diet is SIGMA LEVEL balanced.",
+    bristolFact: "Bristol Type 4 — smooth soft sausage. THE ideal poop. Your gut is thriving!"
+  },
+  {
+    id: "dog_water", name: "Dog Water", emoji: "💩💧", bristolType: 5,
+    rarity: "Common", color: "#6B4226",
+    description: "Watery and all over the place. Try a more balanced diet, chief.",
+    bristolFact: "Bristol Type 5 — mushy or watery. Eat more fiber-rich foods to firm things up!"
+  },
+  {
+    id: "perfect_poop", name: "Perfect Poop", emoji: "💩👑", bristolType: "Mythic",
+    rarity: 1000000, color: "#FFD700",
+    description: "THE LEGENDARY PERFECT POOP. You have mastered every single food group!!",
+    bristolFact: "Mythic rarity — only earned by the most dedicated explorer who collected 3 of EVERY food!"
+  }
+];
+
 // XP needed for each organ level: level 1 → 2 needs 50, then +25 per level.
 export function xpForLevel(level) {
   return 50 + (level - 1) * 25;

@@ -1,7 +1,7 @@
 // All HUD and panel logic: organ meters, backpack, pickup prompt,
 // fact toasts, and menu wiring.
 
-import { ORGANS, FOODS, xpForLevel } from "../data/foods.js";
+import { ORGANS, FOODS, POOP_TYPES, xpForLevel } from "../data/foods.js";
 
 export function organLevel(totalXp) {
   let level = 1, remaining = totalXp;
@@ -119,5 +119,40 @@ export class UI {
     if (!any) {
       grid.innerHTML = `<p class="bp-empty">Your backpack is empty.<br>Walk up to a food and press <kbd>F</kbd>!</p>`;
     }
+
+    // Poop collection section
+    const poops = this.save.poops || {};
+    const poopEntries = POOP_TYPES.filter(p => (poops[p.id] || 0) > 0);
+    if (poopEntries.length > 0) {
+      const heading = document.createElement("h3");
+      heading.className = "bp-section-title";
+      heading.textContent = "💩 Poop Collection";
+      grid.appendChild(heading);
+      for (const poop of poopEntries) {
+        const count = poops[poop.id];
+        const cell = document.createElement("div");
+        cell.className = "backpack-item poop-item";
+        const isLegendary = poop.id === "perfect_poop";
+        if (isLegendary) cell.classList.add("legendary-item");
+        cell.innerHTML = `
+          <div class="bp-emoji">${poop.emoji}</div>
+          <div class="bp-name">${poop.name}</div>
+          <div class="bp-count">×${count}</div>
+          <div class="bp-organ">${isLegendary ? "✨ Mythic ✨" : `Bristol Type ${poop.bristolType}`}</div>`;
+        grid.appendChild(cell);
+      }
+    }
+  }
+
+  showPrompt(text) {
+    const prompt = document.getElementById("pickup-prompt");
+    document.getElementById("pickup-food-name").textContent = text;
+    prompt.classList.remove("hidden");
+    document.getElementById("btn-pickup-touch").classList.add("hidden");
+  }
+
+  hidePrompt() {
+    document.getElementById("pickup-prompt").classList.add("hidden");
+    document.getElementById("btn-pickup-touch").classList.add("hidden");
   }
 }

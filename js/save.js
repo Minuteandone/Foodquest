@@ -11,6 +11,7 @@ export function defaultSave(playerName) {
     position: null,           // null = use level spawn point
     organXp: {},              // organId -> total xp
     backpack: {},             // foodId -> count collected (all time)
+    poops: {},                // poopId -> count obtained from PooPoo Plaza
     totalPicked: 0,
     playSeconds: 0,
     savedAt: null

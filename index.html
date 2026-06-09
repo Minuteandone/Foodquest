@@ -32,7 +32,9 @@
       </div>
       <div class="title-help">
         <p><b>How to play:</b> Walk with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> (or the touch pad).
-        Press <kbd>F</kbd> (or tap 🖐) to pick up food. Every food makes a different body part stronger!</p>
+        Press <kbd>Space</kbd> to jump. Press <kbd>F</kbd> (or tap 🖐) to pick up food.
+        Every food makes a different body part stronger!
+        Find the 💩 building to visit PooPoo Plaza!</p>
       </div>
     </div>
   </div>
@@ -72,6 +74,7 @@
       <div id="joystick-base"><div id="joystick-thumb"></div></div>
     </div>
     <button id="btn-pickup-touch" class="hidden">🖐</button>
+    <button id="btn-jump-touch" title="Jump">⬆️</button>
   </div>
 
   <!-- Backpack panel -->
@@ -93,6 +96,51 @@
       <button id="btn-import" class="big-btn">📥 Import Save File</button>
       <input id="import-file" type="file" accept=".json" class="hidden" />
       <button id="btn-reset" class="big-btn danger">🗑 Start Over (erase save)</button>
+    </div>
+  </div>
+
+  <!-- PooPoo Plaza store panel -->
+  <div id="store-panel" class="overlay hidden">
+    <div class="store-card">
+      <div class="store-header">💩 PooPoo Plaza</div>
+      <div class="bristol-box">
+        <div id="bristol-quote" class="bristol-quote">"Welcome, young explorer!"</div>
+        <div class="bristol-name">— Bristol, Poop Clerk 👴</div>
+      </div>
+
+      <div id="perfect-poop-banner" class="perfect-poop-banner hidden">
+        ✨ PERFECT POOP AVAILABLE! ✨ Click here to select 3 of everything!
+      </div>
+
+      <div class="trade-layout">
+        <div class="trade-left">
+          <h3 class="trade-heading">🍎 Offer Foods:</h3>
+          <div id="trade-food-grid" class="trade-food-grid"></div>
+          <div id="trade-count" class="trade-count">Offering: 0 foods</div>
+          <button id="btn-clear-trade" class="big-btn secondary-btn">Clear</button>
+        </div>
+        <div class="trade-right">
+          <h3 class="trade-heading">You'll receive:</h3>
+          <div class="trade-preview-box">
+            <div id="trade-poop-emoji" class="preview-emoji">❓</div>
+            <div id="trade-poop-name" class="preview-name">Select some foods!</div>
+            <div id="trade-poop-type" class="preview-type"></div>
+            <div id="trade-poop-rarity" class="preview-rarity"></div>
+          </div>
+          <button id="btn-trade" class="big-btn" disabled>💩 Trade!</button>
+        </div>
+      </div>
+
+      <!-- Trade result overlay (shown after a successful trade) -->
+      <div id="trade-result-overlay" class="trade-result-overlay hidden">
+        <div class="result-emoji" id="result-poop-emoji">💩</div>
+        <div class="result-name" id="result-poop-name">Sigma Smooth</div>
+        <div class="result-desc" id="result-poop-desc"></div>
+        <div class="result-fact" id="result-poop-fact"></div>
+        <button id="btn-result-continue" class="big-btn">Keep Trading!</button>
+      </div>
+
+      <button id="btn-leave-store" class="big-btn danger-outline">🚪 Leave PooPoo Plaza</button>
     </div>
   </div>
 

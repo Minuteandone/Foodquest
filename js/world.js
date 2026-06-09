@@ -143,5 +143,86 @@ export function buildWorld(scene, level) {
     }
   }
 
-  return { obstacles, half };
+  const poopStore = buildPoopStore(scene);
+  for (const ob of poopStore.obstacles) obstacles.push(ob);
+
+  return { obstacles, half, poopEntrance: poopStore.entrance };
+}
+
+export function buildPoopStore(scene) {
+  const STORE_X = -70, STORE_Z = -70;
+  const storeY = terrainHeight(STORE_X, STORE_Z);
+
+  const brownMat   = new THREE.MeshLambertMaterial({ color: 0x6B3A2A });
+  const darkMat    = new THREE.MeshLambertMaterial({ color: 0x3d1a0a });
+
+  const storeGroup = new THREE.Group();
+
+  // Three stacked squashed spheres — the classic poop swirl
+  const scoopData = [
+    { r: 4.5, sy: 0.62, y: 2.8 },
+    { r: 3.2, sy: 0.78, y: 8.0 },
+    { r: 2.0, sy: 0.88, y: 12.6 }
+  ];
+  for (const s of scoopData) {
+    const scoop = new THREE.Mesh(new THREE.SphereGeometry(s.r, 14, 10), brownMat);
+    scoop.scale.y = s.sy;
+    scoop.position.y = s.y;
+    scoop.castShadow = true;
+    storeGroup.add(scoop);
+  }
+
+  // Swirl tip
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.9, 3.2, 8), brownMat);
+  tip.position.set(0.7, 16.8, 0);
+  tip.rotation.z = -0.35;
+  tip.castShadow = true;
+  storeGroup.add(tip);
+
+  // Sign with canvas texture
+  const signCanvas = document.createElement("canvas");
+  signCanvas.width = 512; signCanvas.height = 128;
+  const ctx = signCanvas.getContext("2d");
+  ctx.fillStyle = "#FFF8E7";
+  ctx.roundRect(4, 4, 504, 120, 14);
+  ctx.fill();
+  ctx.fillStyle = "#5c2e0a";
+  ctx.font = "bold 46px 'Comic Sans MS', cursive, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("💩 PooPoo Plaza", 256, 64);
+  const signTex = new THREE.CanvasTexture(signCanvas);
+
+  const signFaceMat  = new THREE.MeshLambertMaterial({ map: signTex });
+  const signSideMat  = darkMat;
+  const sign = new THREE.Mesh(
+    new THREE.BoxGeometry(6.5, 1.5, 0.35),
+    [signSideMat, signSideMat, signSideMat, signSideMat, signFaceMat, signSideMat]
+  );
+  sign.position.set(0, 5.8, 5.4);
+  storeGroup.add(sign);
+
+  // Sign post
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 5.5, 7), darkMat);
+  post.position.set(0, 2.75, 5.4);
+  storeGroup.add(post);
+
+  // Entrance pillars + lintel
+  for (const side of [-3, 3]) {
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.55, 5.5, 8), darkMat);
+    pillar.position.set(side, 2.75, 5);
+    pillar.castShadow = true;
+    storeGroup.add(pillar);
+  }
+  const lintel = new THREE.Mesh(new THREE.BoxGeometry(7, 0.7, 0.6), darkMat);
+  lintel.position.set(0, 5.65, 5);
+  storeGroup.add(lintel);
+
+  storeGroup.position.set(STORE_X, storeY, STORE_Z);
+  scene.add(storeGroup);
+
+  return {
+    obstacles: [{ x: STORE_X, z: STORE_Z, radius: 5.5 }],
+    entrance: { x: STORE_X, z: STORE_Z + 8, r: 7 }
+  };
 }

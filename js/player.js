@@ -17,6 +17,9 @@ export class Player {
     this.keys = {};
     this.joystick = { active: false, x: 0, y: 0 };
     this.walkCycle = 0;
+    this.velocityY = 0;
+    this.isGrounded = true;
+    this.jumpWasDown = false;
 
     this.mesh = this.buildCharacter();
     scene.add(this.mesh);
@@ -174,7 +177,26 @@ export class Player {
       this.armR.rotation.x *= 0.8;
     }
 
-    this.position.y = terrainHeight(this.position.x, this.position.z);
+    // Jump (edge-triggered so holding Space doesn't multi-jump)
+    const jumpDown = !!this.keys["Space"];
+    if (jumpDown && !this.jumpWasDown && this.isGrounded) {
+      this.velocityY = 9;
+      this.isGrounded = false;
+    }
+    this.jumpWasDown = jumpDown;
+
+    // Gravity + vertical movement
+    this.velocityY -= 22 * dt;
+    this.position.y += this.velocityY * dt;
+
+    // Clamp to terrain so we land properly
+    const ground = terrainHeight(this.position.x, this.position.z);
+    if (this.position.y <= ground) {
+      this.position.y = ground;
+      this.velocityY = 0;
+      this.isGrounded = true;
+    }
+
     this.mesh.position.copy(this.position);
     if (moving) {
       this.mesh.rotation.y = lerpAngle(this.mesh.rotation.y, this.heading, Math.min(1, dt * 10));
@@ -191,6 +213,14 @@ export class Player {
     const target = new THREE.Vector3(cx, Math.max(cy, terrainHeight(cx, cz) + 1.2), cz);
     this.camera.position.lerp(target, Math.min(1, dt * 6));
     this.camera.lookAt(this.position.x, this.position.y + 1.4, this.position.z);
+  }
+
+  triggerJump() {
+    if (this.isGrounded) {
+      this.velocityY = 9;
+      this.isGrounded = false;
+      this.jumpWasDown = true;
+    }
   }
 }
 
