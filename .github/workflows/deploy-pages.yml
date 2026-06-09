@@ -29,6 +29,9 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          # Enable GitHub Pages for the repo automatically on first run
+          enablement: true
 
       # The game is plain HTML/JS with no build step — publish the repo root.
       - name: Upload site
