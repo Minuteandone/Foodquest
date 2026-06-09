@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Food Quest — A Health Adventure</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <!-- Title screen -->
+  <div id="title-screen" class="overlay">
+    <div class="title-card">
+      <h1>🍎 Food Quest</h1>
+      <p class="subtitle">Eat smart. Grow strong. Explore!</p>
+      <div id="continue-info" class="hidden">
+        <p id="continue-text"></p>
+      </div>
+      <div class="title-form">
+        <label for="player-name">Your explorer name:</label>
+        <input id="player-name" type="text" maxlength="16" placeholder="e.g. Captain Carrot" autocomplete="off" />
+      </div>
+      <div class="title-buttons">
+        <button id="btn-continue" class="big-btn hidden">▶ Continue Adventure</button>
+        <button id="btn-new-game" class="big-btn">🌱 New Adventure</button>
+      </div>
+      <div class="title-help">
+        <p><b>How to play:</b> Walk with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> (or the touch pad).
+        Press <kbd>F</kbd> (or tap 🖐) to pick up food. Every food makes a different body part stronger!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-game HUD -->
+  <div id="hud" class="hidden">
+    <!-- Organ XP meters -->
+    <div id="organ-panel"></div>
+
+    <!-- Level name + player info -->
+    <div id="level-banner">
+      <span id="level-name"></span>
+      <span id="player-info"></span>
+    </div>
+
+    <!-- Pickup prompt -->
+    <div id="pickup-prompt" class="hidden">
+      Press <kbd>F</kbd> to pick up <span id="pickup-food-name"></span>
+    </div>
+
+    <!-- Fact toast (health literacy tip after pickup) -->
+    <div id="fact-toast" class="hidden">
+      <div id="fact-title"></div>
+      <div id="fact-body"></div>
+    </div>
+
+    <!-- Buttons -->
+    <div id="hud-buttons">
+      <button id="btn-backpack" title="Backpack (B)">🎒</button>
+      <button id="btn-save" title="Save game">💾</button>
+      <button id="btn-menu" title="Menu (Esc)">☰</button>
+    </div>
+    <div id="save-indicator" class="hidden">Saved! ✅</div>
+
+    <!-- Touch controls -->
+    <div id="touch-joystick">
+      <div id="joystick-base"><div id="joystick-thumb"></div></div>
+    </div>
+    <button id="btn-pickup-touch" class="hidden">🖐</button>
+  </div>
+
+  <!-- Backpack panel -->
+  <div id="backpack-panel" class="overlay hidden">
+    <div class="panel-card">
+      <h2>🎒 Your Backpack</h2>
+      <div id="backpack-grid"></div>
+      <button id="btn-close-backpack" class="big-btn">Back to the forest</button>
+    </div>
+  </div>
+
+  <!-- Pause / settings menu -->
+  <div id="menu-panel" class="overlay hidden">
+    <div class="panel-card">
+      <h2>⏸ Menu</h2>
+      <button id="btn-resume" class="big-btn">▶ Keep Playing</button>
+      <button id="btn-save-menu" class="big-btn">💾 Save Game</button>
+      <button id="btn-export" class="big-btn">📤 Export Save File</button>
+      <button id="btn-import" class="big-btn">📥 Import Save File</button>
+      <input id="import-file" type="file" accept=".json" class="hidden" />
+      <button id="btn-reset" class="big-btn danger">🗑 Start Over (erase save)</button>
+    </div>
+  </div>
+
+  <canvas id="game-canvas"></canvas>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
