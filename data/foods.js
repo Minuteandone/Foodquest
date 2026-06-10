@@ -87,7 +87,7 @@ export const FOODS = [
   },
   {
     id: "poop", name: "Poop", emoji: "💩", organ: "funny", xp: 15,
-    fact: "Hehe... EWW! But guess what — everybody poops! Eating lots of fiber from fruits and veggies keeps your poops healthy. That's how you know your tummy is doing its job!",
+    fact: "poopy",
     color: "#7b5230", shape: "poop", scale: 1
   }
 ];
