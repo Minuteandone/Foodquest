@@ -33,6 +33,22 @@ behind the counter. Trade him foods from your backpack: the more balanced
 your offer, the healthier the poop you get back. Collect 3 of every food to
 unlock the legendary ✨ Perfect Poop ✨.
 
+### 📱 Boss battle: The Gigantic iPad
+
+Once you've traded for poop, a gigantic, fingerprint-smeared iPad appears at
+the back of the map, threatening to destroy the outdoors. Press `F` to face
+it — a chart shows what you need to unlock the battle (**5 poops**, with
+**2 fancy ones**: Cracked, Sigma Smooth, or Perfect).
+
+In battle, your HP equals the total value of the poops you brought, and each
+iPad hit costs 3 HP. The iPad hops 5 steps then falls flat (crushing trees
+and anyone underneath), then charges at double your speed — over and over
+until someone wins. Throw poops with `Q`, a mouse click, or the 🎯 touch
+button (damage = Bristol type number, Perfect Poop hits for 10) along the
+green aiming arc, and switch ammo with `E`. Dog Water can't be thrown —
+place it as a puddle and the iPad slips and falls early. When the battle
+ends, the forest springs back to normal.
+
 ## Running the game
 
 The game is plain HTML/JS (Three.js loaded from a CDN) — no build step.

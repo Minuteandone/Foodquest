@@ -69,6 +69,9 @@ export function buildWorld(scene, level) {
 
   // Obstacles (trees + rocks) for simple collision: {x, z, radius}
   const obstacles = [];
+  // Trees keep a mesh reference so the boss can knock them down
+  // (and the forest can be restored to normal after the battle).
+  const trees = [];
   const rand = (min, max) => min + Math.random() * (max - min);
 
   // Keep a clear spawn meadow in the middle
@@ -98,7 +101,9 @@ export function buildWorld(scene, level) {
     tree.scale.setScalar(s);
     tree.rotation.y = Math.random() * Math.PI * 2;
     scene.add(tree);
-    obstacles.push({ x, z, radius: 0.55 * s });
+    const ob = { x, z, radius: 0.55 * s };
+    obstacles.push(ob);
+    trees.push({ x, z, mesh: tree, obstacle: ob, baseRadius: ob.radius, alive: true });
   }
 
   for (let i = 0; i < level.rockCount; i++) {
@@ -146,7 +151,7 @@ export function buildWorld(scene, level) {
   const poopStore = buildPoopStore(scene);
   for (const ob of poopStore.obstacles) obstacles.push(ob);
 
-  return { obstacles, half, poopEntrance: poopStore.entrance };
+  return { obstacles, trees, half, poopEntrance: poopStore.entrance };
 }
 
 export function buildPoopStore(scene) {

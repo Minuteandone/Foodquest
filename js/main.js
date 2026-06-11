@@ -8,6 +8,7 @@ import { Player, setupJoystick } from "./player.js";
 import { FoodWorld } from "./foodWorld.js";
 import { UI } from "./ui.js";
 import { buildPlaza, Store } from "./store.js";
+import { BossFight } from "./boss.js";
 import {
   defaultSave, loadSave, writeSave, clearSave, exportSave, importSave
 } from "./save.js";
@@ -45,8 +46,9 @@ function setupTitleScreen() {
 // ---------- Game ----------
 
 function startGame(save) {
-  // Ensure save has poops field (migration for old saves)
+  // Ensure save has newer fields (migration for old saves)
   save.poops = save.poops || {};
+  save.bossDefeated = save.bossDefeated || false;
 
   document.getElementById("title-screen").classList.add("hidden");
   document.getElementById("hud").classList.remove("hidden");
@@ -66,12 +68,18 @@ function startGame(save) {
   const forestScene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 400);
 
-  const { obstacles, half, poopEntrance } = buildWorld(forestScene, level);
+  const { obstacles, trees, half, poopEntrance } = buildWorld(forestScene, level);
   const spawn = save.position || { x: 0, z: 0 };
   const player = new Player(forestScene, camera, spawn);
   setupJoystick(player);
   const foods = new FoodWorld(forestScene, level);
   const ui = new UI(save);
+
+  // The Gigantic iPad lurks in the back of the map (once you've traded poop)
+  const boss = new BossFight(forestScene, player, ui, save, { trees, obstacles, half }, {
+    save: () => doSave(false),
+    setPaused: (v) => { game.paused = v; }
+  });
 
   // Plaza scene (built once, reused on every visit). The same follow
   // camera is used in both scenes — you walk around inside the store.
@@ -87,7 +95,7 @@ function startGame(save) {
   game = {
     save, level, renderer,
     forestScene, camera,
-    plaza, store,
+    plaza, store, boss,
     player, foods, ui,
     obstacles, half, poopEntrance,
     location: "forest",   // "forest" | "poopoo_plaza"
@@ -97,6 +105,7 @@ function startGame(save) {
   wireHudButtons();
   wirePickup();
   wireJumpTouch();
+  wireBoss();
 
   // Main loop
   const clock = new THREE.Clock();
@@ -110,14 +119,20 @@ function startGame(save) {
       if (game.location === "forest") {
         player.update(dt, obstacles, half);
         foods.update(dt);
+        boss.maybeSpawn();
+        boss.update(dt);
 
-        // Proximity check: store entrance vs nearest food
+        // Proximity check: store entrance vs boss vs nearest food
         const distToEntrance = poopEntrance
           ? Math.hypot(player.position.x - poopEntrance.x, player.position.z - poopEntrance.z)
           : Infinity;
 
-        if (distToEntrance < poopEntrance.r) {
+        if (boss.state === "battle") {
+          ui.hidePrompt();
+        } else if (distToEntrance < poopEntrance.r) {
           ui.showPrompt("to enter 💩 PooPoo Plaza");
+        } else if (boss.canInteract(player.position)) {
+          ui.showPrompt("to face the 📱 Gigantic iPad");
         } else {
           ui.showPickupPrompt(foods.nearest(player.position)?.food || null);
         }
@@ -275,6 +290,8 @@ function handleFKey() {
       : Infinity;
     if (dist < game.poopEntrance.r) {
       enterStore();
+    } else if (game.boss.canInteract(game.player.position)) {
+      openBossPanel();
     } else {
       pickUpNearest();
     }
@@ -282,6 +299,45 @@ function handleFKey() {
     const action = plazaAction();
     if (action) action.run();
   }
+}
+
+// ---------- Boss battle wiring ----------
+
+function openBossPanel() {
+  game.paused = true;
+  game.boss.fillPanel();
+  document.getElementById("boss-panel").classList.remove("hidden");
+}
+
+function wireBoss() {
+  document.getElementById("btn-close-boss").addEventListener("click", () => {
+    document.getElementById("boss-panel").classList.add("hidden");
+    game.paused = false;
+  });
+  document.getElementById("btn-start-battle").addEventListener("click", () => {
+    document.getElementById("boss-panel").classList.add("hidden");
+    game.paused = false;
+    game.boss.startBattle();
+  });
+  document.getElementById("btn-battle-end-ok").addEventListener("click", () => {
+    document.getElementById("battle-end-panel").classList.add("hidden");
+    game.paused = false;
+  });
+
+  // Throw: Q key, a plain mouse click (not a camera drag), or the touch button
+  document.getElementById("btn-throw-touch").addEventListener("click", () => {
+    if (game.location === "forest" && !game.paused) game.boss.tryThrow();
+  });
+  const canvas = document.getElementById("game-canvas");
+  let downX = 0, downY = 0;
+  canvas.addEventListener("mousedown", (e) => { downX = e.clientX; downY = e.clientY; });
+  canvas.addEventListener("mouseup", (e) => {
+    const moved = Math.hypot(e.clientX - downX, e.clientY - downY);
+    if (moved < 6 && game.location === "forest" && !game.paused) game.boss.tryThrow();
+  });
+
+  document.getElementById("btn-ammo-prev").addEventListener("click", () => game.boss.cycleAmmo(-1));
+  document.getElementById("btn-ammo-next").addEventListener("click", () => game.boss.cycleAmmo(1));
 }
 
 // ---------- Input wiring ----------
@@ -292,6 +348,8 @@ function wirePickup() {
     if (e.code === "KeyB") toggleBackpack();
     if (e.code === "Escape") toggleMenu();
     if (e.code === "Space") e.preventDefault(); // stop page-scroll on jump
+    if (e.code === "KeyQ" && game.location === "forest" && !game.paused) game.boss.tryThrow();
+    if (e.code === "KeyE" && game.location === "forest" && !game.paused) game.boss.cycleAmmo(1);
   });
   // The touch action button mirrors F everywhere (pick up / enter / talk...)
   document.getElementById("btn-pickup-touch").addEventListener("click", handleFKey);

@@ -93,44 +93,61 @@ export const FOODS = [
 ];
 
 // Bristol Stool Chart poop types, earned by trading foods at PooPoo Plaza.
+// "damage" is how hard each poop hits the boss (equal to its Bristol type
+// number; the Perfect Poop is mythic and hits for 10). Dog Water isn't
+// thrown — it's placed as a slippery trap that makes the boss fall early.
 export const POOP_TYPES = [
   {
-    id: "pebbly", name: "Pebbly", emoji: "🪨💩", bristolType: 1,
+    id: "pebbly", name: "Pebbly", emoji: "🪨💩", bristolType: 1, damage: 1,
     rarity: "Common", color: "#5c3d20",
     description: "Hard little separate lumps. You need more fiber and water!",
     bristolFact: "Bristol Type 1 — hard separate lumps. More fruits, veggies, and water will help!"
   },
   {
-    id: "lil_lumpy", name: "Lil Lumpy", emoji: "💩", bristolType: 2,
+    id: "lil_lumpy", name: "Lil Lumpy", emoji: "💩", bristolType: 2, damage: 2,
     rarity: "Common", color: "#7b5230",
     description: "Sausage-shaped but lumpy. Getting better — keep eating your veggies!",
     bristolFact: "Bristol Type 2 — lumpy sausage shape. A bit more fiber and you'll level up!"
   },
   {
-    id: "cracked", name: "Cracked", emoji: "💩〰️", bristolType: 3,
+    id: "cracked", name: "Cracked", emoji: "💩〰️", bristolType: 3, damage: 3,
     rarity: "Uncommon", color: "#8B6340",
     description: "Sausage with cracks on the surface. Nice food variety! Almost perfect.",
     bristolFact: "Bristol Type 3 — sausage with cracks. Very healthy — great food variety!"
   },
   {
-    id: "sigma_smooth", name: "Sigma Smooth", emoji: "💩✨", bristolType: 4,
+    id: "sigma_smooth", name: "Sigma Smooth", emoji: "💩✨", bristolType: 4, damage: 4,
     rarity: "Rare", color: "#9B7355",
     description: "Smooth, soft, and ideal! Your diet is SIGMA LEVEL balanced.",
     bristolFact: "Bristol Type 4 — smooth soft sausage. THE ideal poop. Your gut is thriving!"
   },
   {
-    id: "dog_water", name: "Dog Water", emoji: "💩💧", bristolType: 5,
+    id: "dog_water", name: "Dog Water", emoji: "💩💧", bristolType: 5, damage: 5,
     rarity: "Common", color: "#6B4226",
     description: "Watery and all over the place. Try a more balanced diet, chief.",
     bristolFact: "Bristol Type 5 — mushy or watery. Eat more fiber-rich foods to firm things up!"
   },
   {
-    id: "perfect_poop", name: "Perfect Poop", emoji: "💩👑", bristolType: "Mythic",
+    id: "perfect_poop", name: "Perfect Poop", emoji: "💩👑", bristolType: "Mythic", damage: 10,
     rarity: 1000000, color: "#FFD700",
     description: "THE LEGENDARY PERFECT POOP. You have mastered every single food group!!",
     bristolFact: "Mythic rarity — only earned by the most dedicated explorer who collected 3 of EVERY food!"
   }
 ];
+
+// The Gigantic iPad boss. Edit these to tune the battle!
+export const BOSS = {
+  name: "The Gigantic iPad",
+  hp: 20,                 // boss health
+  minPoops: 5,            // total poops needed to unlock the battle
+  minFancyPoops: 2,       // ...of which this many must be fancy:
+  fancyIds: ["cracked", "sigma_smooth", "perfect_poop"],
+  hitDamage: 3,           // HP the player loses when the iPad hits them
+  stepsPerCycle: 5,       // hops before it falls over
+  stepDistance: 4.5,      // meters per hop
+  chargeMultiplier: 2,    // charge speed = this × player walk speed
+  throwRange: 30          // max poop throwing distance (meters)
+};
 
 // XP needed for each organ level: level 1 → 2 needs 50, then +25 per level.
 export function xpForLevel(level) {

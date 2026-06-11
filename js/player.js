@@ -3,7 +3,7 @@
 import * as THREE from "three";
 import { terrainHeight } from "./world.js";
 
-const WALK_SPEED = 6;
+export const WALK_SPEED = 6;
 const RUN_SPEED = 10;
 const PLAYER_RADIUS = 0.5;
 

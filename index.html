@@ -69,6 +69,29 @@
     </div>
     <div id="save-indicator" class="hidden">Saved! ✅</div>
 
+    <!-- Boss battle HUD -->
+    <div id="boss-hp" class="hidden">
+      <div class="hp-label">📱 The Gigantic iPad <span id="boss-hp-num"></span></div>
+      <div class="hp-bar"><div id="boss-hp-fill" class="hp-fill boss-fill"></div></div>
+    </div>
+    <div id="player-hp" class="hidden">
+      <div class="hp-label">💪 You <span id="player-hp-num"></span></div>
+      <div class="hp-bar"><div id="player-hp-fill" class="hp-fill player-fill"></div></div>
+    </div>
+    <div id="ammo-box" class="hidden">
+      <div class="ammo-row">
+        <button id="btn-ammo-prev" class="ammo-btn">◀</button>
+        <div id="ammo-current">
+          <span id="ammo-emoji">💩</span>
+          <span id="ammo-name"></span>
+          <b id="ammo-count"></b>
+        </div>
+        <button id="btn-ammo-next" class="ammo-btn">▶</button>
+      </div>
+      <div id="ammo-hint"></div>
+    </div>
+    <button id="btn-throw-touch" class="hidden">🎯</button>
+
     <!-- Touch controls -->
     <div id="touch-joystick">
       <div id="joystick-base"><div id="joystick-thumb"></div></div>
@@ -142,6 +165,29 @@
 
       <button id="btn-done-talking" class="big-btn secondary-btn">👋 Done Talking (look around)</button>
       <button id="btn-leave-store" class="big-btn danger-outline">🚪 Leave PooPoo Plaza</button>
+    </div>
+  </div>
+
+  <!-- Boss challenge dialog: taunt + requirement chart -->
+  <div id="boss-panel" class="overlay hidden">
+    <div class="panel-card">
+      <h2>📱 The Gigantic iPad</h2>
+      <p id="boss-taunt" class="boss-taunt"></p>
+      <p id="boss-subtaunt" class="boss-subtaunt"></p>
+      <div id="boss-reqs"></div>
+      <p id="boss-req-hint" class="boss-req-hint"></p>
+      <button id="btn-start-battle" class="big-btn danger hidden">⚔️ BATTLE!</button>
+      <button id="btn-close-boss" class="big-btn secondary-btn">🏃 Run away (for now)</button>
+    </div>
+  </div>
+
+  <!-- Battle result -->
+  <div id="battle-end-panel" class="overlay hidden">
+    <div class="panel-card">
+      <div id="battle-end-emoji" class="battle-end-emoji"></div>
+      <h2 id="battle-end-title"></h2>
+      <p id="battle-end-body" class="battle-end-body"></p>
+      <button id="btn-battle-end-ok" class="big-btn">Back to the forest 🌳</button>
     </div>
   </div>
 
