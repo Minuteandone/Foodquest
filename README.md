@@ -23,6 +23,16 @@ short while, so the forest never runs out.
 Keep an eye out for 💩 poop hiding between the trees — picking it up fills
 your 😂 Funny meter (and sneaks in a lesson about fiber).
 
+### 💩 PooPoo Plaza
+
+Find the giant poop building in the forest and press `F` to step inside.
+You can walk around the store, inspect the poops on the shelves — each one
+is modeled after a real **Bristol Stool Chart** type (1 = pebbly lumps up to
+the ideal smooth Type 4 and beyond) — and talk to Bristol, the old clerk
+behind the counter. Trade him foods from your backpack: the more balanced
+your offer, the healthier the poop you get back. Collect 3 of every food to
+unlock the legendary ✨ Perfect Poop ✨.
+
 ## Running the game
 
 The game is plain HTML/JS (Three.js loaded from a CDN) — no build step.

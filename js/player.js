@@ -20,6 +20,11 @@ export class Player {
     this.velocityY = 0;
     this.isGrounded = true;
     this.jumpWasDown = false;
+    // Pluggable environment: forest uses rolling terrain, the plaza
+    // swaps in a flat floor, a closer camera, and room bounds.
+    this.groundFn = terrainHeight;
+    this.cameraDist = 9;
+    this.cameraBounds = null;   // {minX,maxX,minZ,maxZ,maxY} or null
 
     this.mesh = this.buildCharacter();
     scene.add(this.mesh);
@@ -189,8 +194,8 @@ export class Player {
     this.velocityY -= 22 * dt;
     this.position.y += this.velocityY * dt;
 
-    // Clamp to terrain so we land properly
-    const ground = terrainHeight(this.position.x, this.position.z);
+    // Clamp to the ground so we land properly
+    const ground = this.groundFn(this.position.x, this.position.z);
     if (this.position.y <= ground) {
       this.position.y = ground;
       this.velocityY = 0;
@@ -206,11 +211,18 @@ export class Player {
   }
 
   updateCamera(dt) {
-    const dist = 9;
+    const dist = this.cameraDist;
     const cx = this.position.x + Math.sin(this.cameraYaw) * dist * Math.cos(this.cameraPitch);
     const cz = this.position.z + Math.cos(this.cameraYaw) * dist * Math.cos(this.cameraPitch);
     const cy = this.position.y + 2 + Math.sin(this.cameraPitch) * dist;
-    const target = new THREE.Vector3(cx, Math.max(cy, terrainHeight(cx, cz) + 1.2), cz);
+    const target = new THREE.Vector3(cx, Math.max(cy, this.groundFn(cx, cz) + 1.2), cz);
+    // Keep the camera inside the room when indoors
+    if (this.cameraBounds) {
+      const b = this.cameraBounds;
+      target.x = THREE.MathUtils.clamp(target.x, b.minX, b.maxX);
+      target.z = THREE.MathUtils.clamp(target.z, b.minZ, b.maxZ);
+      target.y = Math.min(target.y, b.maxY);
+    }
     this.camera.position.lerp(target, Math.min(1, dt * 6));
     this.camera.lookAt(this.position.x, this.position.y + 1.4, this.position.z);
   }

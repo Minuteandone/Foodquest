@@ -104,40 +104,98 @@ function buildBristol() {
   return g;
 }
 
+// Each shelf display is shaped after its real Bristol Stool Chart type.
 function buildPoopShelfDisplay(poopType) {
   const g = new THREE.Group();
   const color = new THREE.Color(poopType.color);
   const mat = new THREE.MeshLambertMaterial({ color });
 
-  if (poopType.id === "perfect_poop") {
-    const goldMat = new THREE.MeshLambertMaterial({ color: 0xFFD700, emissive: new THREE.Color(0x553300) });
-    const poop = buildMiniPoop(goldMat);
-    poop.scale.setScalar(1.3);
-    g.add(poop);
-    const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(0.65, 0.06, 6, 20),
-      new THREE.MeshBasicMaterial({ color: 0xFFFF44 })
-    );
-    ring.rotation.x = Math.PI / 2;
-    ring.position.y = 0.55;
-    g.add(ring);
-  } else if (poopType.id === "dog_water") {
-    const mushy = new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 8), mat);
-    mushy.scale.set(1.3, 0.45, 1.2);
-    mushy.position.y = 0.21;
-    g.add(mushy);
-    // little drip
-    const drip = new THREE.Mesh(new THREE.SphereGeometry(0.14, 7, 6), mat);
-    drip.position.set(0.4, 0.08, 0);
-    g.add(drip);
-  } else if (poopType.id === "pebbly") {
-    for (const [px, py, pz] of [[0,0,0],[0.28,0,0.14],[-0.18,0,-0.22],[0.1,0.14,0.26],[-0.28,0.05,-0.1]]) {
-      const lump = new THREE.Mesh(new THREE.SphereGeometry(0.14, 7, 6), mat);
-      lump.position.set(px, py + 0.14, pz);
-      g.add(lump);
+  switch (poopType.id) {
+    case "pebbly": {
+      // Type 1: separate hard little lumps, like pebbles
+      for (const [px, py, pz] of [[0,0,0],[0.28,0,0.14],[-0.18,0,-0.22],[0.1,0.14,0.26],[-0.28,0.05,-0.1]]) {
+        const lump = new THREE.Mesh(new THREE.SphereGeometry(0.14, 7, 6), mat);
+        lump.position.set(px, py + 0.14, pz);
+        lump.scale.set(1, 0.85, 0.95);
+        g.add(lump);
+      }
+      break;
     }
-  } else {
-    g.add(buildMiniPoop(mat));
+    case "lil_lumpy": {
+      // Type 2: one sausage, but lumpy — bumps fused along a core
+      const core = new THREE.Mesh(new THREE.CapsuleGeometry(0.15, 0.8, 4, 8), mat);
+      core.rotation.z = Math.PI / 2;
+      core.position.y = 0.18;
+      g.add(core);
+      for (const [px, pz, r] of [[-0.34, 0.05, 0.17], [-0.1, -0.07, 0.19], [0.14, 0.06, 0.18], [0.36, -0.04, 0.16]]) {
+        const bump = new THREE.Mesh(new THREE.SphereGeometry(r, 7, 6), mat);
+        bump.position.set(px, 0.2, pz);
+        g.add(bump);
+      }
+      break;
+    }
+    case "cracked": {
+      // Type 3: smooth sausage with cracks across the surface
+      const core = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.85, 4, 10), mat);
+      core.rotation.z = Math.PI / 2;
+      core.position.y = 0.19;
+      g.add(core);
+      const crackMat = new THREE.MeshLambertMaterial({ color: color.clone().multiplyScalar(0.45) });
+      for (const px of [-0.28, -0.02, 0.24]) {
+        const crack = new THREE.Mesh(new THREE.TorusGeometry(0.165, 0.022, 5, 14), crackMat);
+        crack.rotation.y = Math.PI / 2;
+        crack.position.set(px, 0.19, 0);
+        g.add(crack);
+      }
+      break;
+    }
+    case "sigma_smooth": {
+      // Type 4: the ideal — one smooth, soft snake with a gentle curve
+      const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.45, 0.16, -0.14),
+        new THREE.Vector3(-0.15, 0.16, 0.12),
+        new THREE.Vector3(0.15, 0.16, -0.12),
+        new THREE.Vector3(0.45, 0.16, 0.14)
+      ]);
+      const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.15, 10, false), mat);
+      g.add(tube);
+      for (const t of [0, 1]) {
+        const cap = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 7), mat);
+        cap.position.copy(curve.getPoint(t));
+        g.add(cap);
+      }
+      break;
+    }
+    case "dog_water": {
+      // Type 5+: soft mushy blobs with ragged edges, and a drip
+      for (const [px, pz, s] of [[-0.22, 0.1, 1], [0.18, -0.12, 0.85], [0.05, 0.24, 0.7]]) {
+        const blob = new THREE.Mesh(new THREE.SphereGeometry(0.26, 9, 7), mat);
+        blob.scale.set(1.25 * s, 0.42 * s, 1.15 * s);
+        blob.position.set(px, 0.11 * s, pz);
+        g.add(blob);
+      }
+      const drip = new THREE.Mesh(new THREE.SphereGeometry(0.1, 7, 6), mat);
+      drip.position.set(0.42, 0.06, 0.12);
+      drip.scale.y = 0.6;
+      g.add(drip);
+      break;
+    }
+    case "perfect_poop": {
+      const goldMat = new THREE.MeshLambertMaterial({ color: 0xFFD700, emissive: new THREE.Color(0x553300) });
+      const poop = buildMiniPoop(goldMat);
+      poop.scale.setScalar(1.3);
+      g.add(poop);
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(0.65, 0.06, 6, 20),
+        new THREE.MeshBasicMaterial({ color: 0xFFFF44 })
+      );
+      ring.rotation.x = Math.PI / 2;
+      ring.position.y = 0.55;
+      g.add(ring);
+      break;
+    }
+    default:
+      g.add(buildMiniPoop(mat));
   }
   return g;
 }
@@ -239,7 +297,8 @@ export function buildPlaza() {
   bristol.position.set(0, 0, -9.5);
   scene.add(bristol);
 
-  // Shelves — 3 on each side wall
+  // Shelves — 3 on each side wall. Walking up to one lets you inspect it.
+  const shelfSpots = [];
   const shelfSetup = [
     { x: -9.8, zs: [-7, -3.5, 0],  poopIds: ["pebbly", "lil_lumpy", "dog_water"] },
     { x:  9.8, zs: [-7, -3.5, 0],  poopIds: ["cracked", "sigma_smooth", "perfect_poop"] },
@@ -259,6 +318,7 @@ export function buildPlaza() {
       display.scale.setScalar(0.95);
       display.position.set(x > 0 ? x - 0.3 : x + 0.3, 2.35, z);
       scene.add(display);
+      shelfSpots.push({ x: display.position.x, z, poopType });
 
       // Name label below shelf
       const isGold = poopType.id === "perfect_poop";
@@ -299,12 +359,24 @@ export function buildPlaza() {
     scene.add(es);
   }
 
-  // Fixed camera looking from player-entry side toward Bristol
-  const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 100);
-  camera.position.set(0, 4, 8.5);
-  camera.lookAt(0, 2.8, -4);
+  // Circle obstacles so the player can't walk through the counter or Bristol
+  const obstacles = [
+    { x: -2, z: -8, radius: 1.1 },
+    { x:  0, z: -8, radius: 1.1 },
+    { x:  2, z: -8, radius: 1.1 },
+    { x:  0, z: -9.5, radius: 0.7 }   // Bristol himself
+  ];
 
-  return { scene, camera, bristol };
+  return {
+    scene,
+    obstacles,
+    shelfSpots,
+    bristol,
+    bristolSpot: { x: 0, z: -9.5 },   // stand near here to talk
+    doorZ: 8.8,                        // walk past this z to find the exit
+    spawn: { x: 0, z: 7.2 },           // where the player appears on entry
+    half: 12                           // room bounds for the player clamp
+  };
 }
 
 // --- Trade logic ---
@@ -363,10 +435,11 @@ export function playHeavenlySound() {
 // --- Store UI class ---
 
 export class Store {
-  constructor(save, doSave, onLeave) {
+  constructor(save, doSave, onLeave, onClose) {
     this.save = save;
     this.doSave = doSave;
-    this.onLeave = onLeave;
+    this.onLeave = onLeave;   // leave the plaza entirely (back to forest)
+    this.onClose = onClose;   // just end the chat, keep browsing the store
     this.selected = {};   // foodId -> count being offered
     this._quoteIdx = Math.floor(Math.random() * BRISTOL_QUOTES.length);
     this._wired = false;
@@ -495,6 +568,10 @@ export class Store {
     document.getElementById("btn-leave-store").addEventListener("click", () => {
       this.close();
       this.onLeave();
+    });
+    document.getElementById("btn-done-talking").addEventListener("click", () => {
+      this.close();
+      this.onClose();
     });
     document.getElementById("perfect-poop-banner").addEventListener("click", () => {
       // Auto-fill 3 of each food for the Perfect Poop trade

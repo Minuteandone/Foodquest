@@ -3,7 +3,7 @@
 
 import * as THREE from "three";
 import { LEVELS } from "../data/foods.js";
-import { buildWorld } from "./world.js";
+import { buildWorld, terrainHeight } from "./world.js";
 import { Player, setupJoystick } from "./player.js";
 import { FoodWorld } from "./foodWorld.js";
 import { UI } from "./ui.js";
@@ -73,17 +73,14 @@ function startGame(save) {
   const foods = new FoodWorld(forestScene, level);
   const ui = new UI(save);
 
-  // Plaza scene (built once, reused on every visit)
+  // Plaza scene (built once, reused on every visit). The same follow
+  // camera is used in both scenes — you walk around inside the store.
   const plaza = buildPlaza();
-  plaza.camera.aspect = window.innerWidth / window.innerHeight;
-  plaza.camera.updateProjectionMatrix();
-  const store = new Store(save, () => doSave(false), exitStore);
+  const store = new Store(save, () => doSave(false), exitStore, closeDialog);
 
   window.addEventListener("resize", () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    plaza.camera.aspect = window.innerWidth / window.innerHeight;
-    plaza.camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
@@ -109,19 +106,27 @@ function startGame(save) {
     requestAnimationFrame(frame);
     const dt = Math.min(clock.getDelta(), 0.1);
 
-    if (game.location === "forest" && !game.paused) {
-      player.update(dt, obstacles, half);
-      foods.update(dt);
+    if (!game.paused) {
+      if (game.location === "forest") {
+        player.update(dt, obstacles, half);
+        foods.update(dt);
 
-      // Proximity check: store entrance vs nearest food
-      const distToEntrance = poopEntrance
-        ? Math.hypot(player.position.x - poopEntrance.x, player.position.z - poopEntrance.z)
-        : Infinity;
+        // Proximity check: store entrance vs nearest food
+        const distToEntrance = poopEntrance
+          ? Math.hypot(player.position.x - poopEntrance.x, player.position.z - poopEntrance.z)
+          : Infinity;
 
-      if (distToEntrance < poopEntrance.r) {
-        ui.showPrompt("Press F to enter 💩 PooPoo Plaza");
+        if (distToEntrance < poopEntrance.r) {
+          ui.showPrompt("to enter 💩 PooPoo Plaza");
+        } else {
+          ui.showPickupPrompt(foods.nearest(player.position)?.food || null);
+        }
       } else {
-        ui.showPickupPrompt(foods.nearest(player.position)?.food || null);
+        // Inside PooPoo Plaza: walk around, browse shelves, talk to Bristol
+        player.update(dt, plaza.obstacles, plaza.half);
+        const action = plazaAction();
+        if (action) ui.showPrompt(action.prompt);
+        else ui.hidePrompt();
       }
 
       save.playSeconds += dt;
@@ -132,51 +137,113 @@ function startGame(save) {
       }
     }
 
-    const activeScene  = game.location === "forest" ? game.forestScene : game.plaza.scene;
-    const activeCamera = game.location === "forest" ? game.camera       : game.plaza.camera;
-    renderer.render(activeScene, activeCamera);
+    const activeScene = game.location === "forest" ? game.forestScene : game.plaza.scene;
+    renderer.render(activeScene, game.camera);
   }
   frame();
 }
 
 // ---------- Store transitions ----------
 
+// Walking into the plaza puts you INSIDE the store, free to roam:
+// look at the shelves, then talk to Bristol when you're ready to trade.
 function enterStore() {
   if (game.location !== "forest") return;
+  const { player, plaza } = game;
   game.location = "poopoo_plaza";
-  game.paused = true;
-  // Hide forest HUD elements that don't apply in the store
-  document.getElementById("pickup-prompt").classList.add("hidden");
-  document.getElementById("btn-pickup-touch").classList.add("hidden");
-  document.getElementById("btn-jump-touch").classList.add("hidden");
-  document.getElementById("touch-joystick").style.display = "none";
-  game.store.open();
+
+  game.forestScene.remove(player.mesh);
+  plaza.scene.add(player.mesh);
+
+  // Flat floor, tighter indoor camera kept within the room
+  player.groundFn = () => 0;
+  player.cameraDist = 5.5;
+  player.cameraBounds = { minX: -10.4, maxX: 10.4, minZ: -10.4, maxZ: 10.4, maxY: 10.2 };
+  player.position.set(plaza.spawn.x, 0, plaza.spawn.z);
+  player.velocityY = 0;
+  player.isGrounded = true;
+  // Face Bristol at the back of the store
+  player.heading = Math.PI;
+  player.mesh.rotation.y = Math.PI;
+  player.cameraYaw = 0;
 }
 
 function exitStore() {
   if (game.location !== "poopoo_plaza") return;
+  const { player, plaza } = game;
   game.store.close();
   game.location = "forest";
   game.paused = false;
+
+  plaza.scene.remove(player.mesh);
+  game.forestScene.add(player.mesh);
+
+  player.groundFn = terrainHeight;
+  player.cameraDist = 9;
+  player.cameraBounds = null;
   // Place player just outside the entrance so they don't re-trigger immediately
   if (game.poopEntrance) {
-    game.player.position.set(
+    player.position.set(
       game.poopEntrance.x,
       0,
       game.poopEntrance.z + game.poopEntrance.r + 1
     );
-    game.player.velocityY = 0;
-    game.player.isGrounded = true;
+    player.velocityY = 0;
+    player.isGrounded = true;
   }
-  document.getElementById("touch-joystick").style.display = "";
-  document.getElementById("btn-jump-touch").classList.remove("hidden");
+}
+
+// The nearest thing the player can interact with inside the plaza.
+function plazaAction() {
+  const { player, plaza } = game;
+  const distTo = (x, z) => Math.hypot(player.position.x - x, player.position.z - z);
+
+  if (player.position.z > plaza.doorZ) {
+    return { prompt: "to leave 🚪 PooPoo Plaza", run: exitStore };
+  }
+  if (distTo(plaza.bristolSpot.x, plaza.bristolSpot.z) < 3.2) {
+    return { prompt: "to talk to Bristol 👴", run: talkToBristol };
+  }
+  let best = null, bestDist = 2.6;
+  for (const spot of plaza.shelfSpots) {
+    const d = distTo(spot.x, spot.z);
+    if (d < bestDist) { best = spot; bestDist = d; }
+  }
+  if (best) {
+    const p = best.poopType;
+    return {
+      prompt: `to look at ${p.emoji} ${p.name}`,
+      run: () => game.ui.showFact(
+        typeof p.bristolType === "number"
+          ? `${p.emoji} ${p.name} — Bristol Type ${p.bristolType}`
+          : `${p.emoji} ${p.name} — ✨ ${p.bristolType} ✨`,
+        `${p.description} ${p.bristolFact}`
+      )
+    };
+  }
+  return null;
+}
+
+function talkToBristol() {
+  game.paused = true;
+  game.ui.hidePrompt();
+  game.store.open();
+}
+
+// "Done Talking" — close the dialog but stay inside the plaza.
+function closeDialog() {
+  game.paused = false;
 }
 
 // ---------- Persistence ----------
 
 function doSave(showIndicator = true) {
   const { save, player, ui } = game;
-  save.position = { x: player.position.x, z: player.position.z };
+  // Inside the plaza the player's coordinates are store-local, so save
+  // the spot just outside the entrance instead.
+  save.position = game.location === "forest"
+    ? { x: player.position.x, z: player.position.z }
+    : { x: game.poopEntrance.x, z: game.poopEntrance.z + game.poopEntrance.r + 1 };
   writeSave(save);
   if (showIndicator) ui.showSaved();
 }
@@ -196,8 +263,10 @@ function pickUpNearest() {
   doSave(false);
 }
 
+// Context-sensitive action key: pick up / enter / talk / look / leave.
 function handleFKey() {
-  if (game.location === "forest" && !game.paused) {
+  if (game.paused) return;
+  if (game.location === "forest") {
     const dist = game.poopEntrance
       ? Math.hypot(
           game.player.position.x - game.poopEntrance.x,
@@ -209,6 +278,9 @@ function handleFKey() {
     } else {
       pickUpNearest();
     }
+  } else {
+    const action = plazaAction();
+    if (action) action.run();
   }
 }
 
@@ -221,15 +293,21 @@ function wirePickup() {
     if (e.code === "Escape") toggleMenu();
     if (e.code === "Space") e.preventDefault(); // stop page-scroll on jump
   });
-  document.getElementById("btn-pickup-touch").addEventListener("click", pickUpNearest);
+  // The touch action button mirrors F everywhere (pick up / enter / talk...)
+  document.getElementById("btn-pickup-touch").addEventListener("click", handleFKey);
 }
 
 function wireJumpTouch() {
   document.getElementById("btn-jump-touch").addEventListener("click", () => {
-    if (game && game.location === "forest" && !game.paused) {
+    if (game && !game.paused) {
       game.player.triggerJump();
     }
   });
+}
+
+// Stay paused if the Bristol trade dialog is still open underneath.
+function storeDialogOpen() {
+  return !document.getElementById("store-panel").classList.contains("hidden");
 }
 
 function toggleBackpack(forceClose = false) {
@@ -237,7 +315,7 @@ function toggleBackpack(forceClose = false) {
   const open = !panel.classList.contains("hidden");
   if (open || forceClose) {
     panel.classList.add("hidden");
-    game.paused = false;
+    game.paused = storeDialogOpen();
   } else {
     game.ui.refreshBackpack();
     panel.classList.remove("hidden");
@@ -250,7 +328,7 @@ function toggleMenu(forceClose = false) {
   const open = !panel.classList.contains("hidden");
   if (open || forceClose) {
     panel.classList.add("hidden");
-    game.paused = false;
+    game.paused = storeDialogOpen();
   } else {
     panel.classList.remove("hidden");
     game.paused = true;

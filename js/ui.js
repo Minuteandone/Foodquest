@@ -71,9 +71,16 @@ export class UI {
     }
 
     const organ = ORGANS[food.organ];
-    document.getElementById("fact-title").textContent =
-      `${food.emoji} ${food.name} → ${organ.emoji} ${organ.name} +${food.xp} XP`;
-    document.getElementById("fact-body").textContent = food.fact;
+    this.showFact(
+      `${food.emoji} ${food.name} → ${organ.emoji} ${organ.name} +${food.xp} XP`,
+      food.fact
+    );
+  }
+
+  // Toast with a title + body, used for pickups and shelf inspections.
+  showFact(title, body) {
+    document.getElementById("fact-title").textContent = title;
+    document.getElementById("fact-body").textContent = body;
     const toast = document.getElementById("fact-toast");
     toast.classList.remove("hidden");
     clearTimeout(this.factTimer);
@@ -81,14 +88,10 @@ export class UI {
   }
 
   showPickupPrompt(food) {
-    const prompt = document.getElementById("pickup-prompt");
     if (food) {
-      document.getElementById("pickup-food-name").textContent = `${food.emoji} ${food.name}`;
-      prompt.classList.remove("hidden");
-      document.getElementById("btn-pickup-touch").classList.remove("hidden");
+      this.showPrompt(`to pick up ${food.emoji} ${food.name}`);
     } else {
-      prompt.classList.add("hidden");
-      document.getElementById("btn-pickup-touch").classList.add("hidden");
+      this.hidePrompt();
     }
   }
 
@@ -144,11 +147,13 @@ export class UI {
     }
   }
 
+  // Generic action prompt, e.g. "to talk to Bristol 👴". The touch action
+  // button stays visible so touchscreen players can do everything F does.
   showPrompt(text) {
     const prompt = document.getElementById("pickup-prompt");
     document.getElementById("pickup-food-name").textContent = text;
     prompt.classList.remove("hidden");
-    document.getElementById("btn-pickup-touch").classList.add("hidden");
+    document.getElementById("btn-pickup-touch").classList.remove("hidden");
   }
 
   hidePrompt() {
