@@ -62,7 +62,7 @@ export const FOODS = [
   },
   {
     id: "justanoval2", name: "it's a seal", emoji: "🥬", organ: "mspam", xp: 12,
-    fact: "It's a seal coming down from my magical he is real dont you frown he cant live in the sea",
+    fact: "It's a seal coming down from his magical tree he is real dont you frown he cant live in the sea",
     color: "#1e8449", shape: "broccoli", scale: 0.8
   },
   {
@@ -76,7 +76,7 @@ export const FOODS = [
     color: "#c0392b", shape: "berry", scale: 0.9
   },
   {
-    id: "cherry", name: "Cherries", emoji: "🍒", organ: "eyes", xp: 8,
+    id: "cherry", name: "Cherries", emoji: "🍒", organ: "quote", xp: 8,
     fact: "cherry from inanimant instanty insant manity santy manty animate sanity",
     color: "#922b21", shape: "berry", scale: 0.8
   },
