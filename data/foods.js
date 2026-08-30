@@ -66,7 +66,7 @@ export const FOODS = [
     color: "#1e8449", shape: "broccoli", scale: 0.8
   },
   {
-    id: "pvz", name: "puffshroom", emoji: "🍄", organ: "confusemoji", xp: 8,
+    id: "pvz", name: "puffshroom", emoji: "🍄", organ: "confusemoji", xp: -8,
     fact: "i dont wanna paste from pvz again i'm too lazy",
     color: "#d35400", shape: "mushroom", scale: 1
   },
