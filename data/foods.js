@@ -66,28 +66,28 @@ export const FOODS = [
     color: "#1e8449", shape: "broccoli", scale: 0.8
   },
   {
-    id: "pvz", name: "puffshroom", emoji: "🍄", organ: "tummy", xp: 8,
+    id: "pvz", name: "puffshroom", emoji: "🍄", organ: "confusemoji", xp: 8,
     fact: "i dont wanna paste from pvz again i'm too lazy",
     color: "#d35400", shape: "mushroom", scale: 1
   },
   {
-    id: "strawberry", name: "Strawberry", emoji: "🍓", organ: "heart", xp: 8,
-    fact: "Strawberries are sweet AND heart-smart, with vitamins that protect your heart.",
+    id: "stray", name: "paper stray", emoji: "🍓", organ: "love", xp: 8,
+    fact: "made a typo but ill keep it lol",
     color: "#c0392b", shape: "berry", scale: 0.9
   },
   {
     id: "cherry", name: "Cherries", emoji: "🍒", organ: "eyes", xp: 8,
-    fact: "Cherries have antioxidants that help protect your eyes from getting tired.",
+    fact: "cherry from inanimant instanty insant manity santy manty animate sanity",
     color: "#922b21", shape: "berry", scale: 0.8
   },
   {
-    id: "pear", name: "Pear", emoji: "🍐", organ: "bones", xp: 8,
-    fact: "Pears have vitamin K and minerals that help your bones grow tall and tough!",
+    id: "ytshorts", name: "royal Pear", emoji: "🍐", organ: "sans", xp: 8,
+    fact: "he's from youtuvbrse",
     color: "#a9c43c", shape: "sphere", scale: 0.95
   },
   {
-    id: "poop", name: "Poop", emoji: "💩", organ: "funny", xp: 15,
-    fact: "Hehe... EWW! But guess what — everybody poops! Eating lots of fiber from fruits and veggies keeps your poops healthy. That's how you know your tummy is doing its job!",
+    id: "poop", name: "regret", emoji: "💩", organ: "regret", xp: 15,
+    fact: "WHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONE",
     color: "#7b5230", shape: "poop", scale: 1
   }
 ];
