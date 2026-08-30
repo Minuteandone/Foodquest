@@ -51,7 +51,7 @@ export const FOODS = [
     color: "#f1c40f", shape: "carrot", scale: 0.9
   },
   {
-    id: "wallnut", name: "Wallnut", emoji: "🌰", organ: "stupid", xp: 8,
+    id: "wallnut", name: "Wallnut", emoji: "🌰", organ: "stupid", xp: -8,
     fact: "People wonder how I feel about getting constantly chewed on by zombies, says Wall-nut. What they don't realize is that with my limited senses all I can feel is a kind of tingling, like a relaxing backrub.",
     color: "#8d6e4a", shape: "nut", scale: 0.7
   },
@@ -86,7 +86,7 @@ export const FOODS = [
     color: "#a9c43c", shape: "sphere", scale: 0.95
   },
   {
-    id: "poop", name: "regret", emoji: "💩", organ: "regret", xp: 15,
+    id: "poop", name: "regret", emoji: "💩", organ: "regret", xp: 999999999999999999999,
     fact: "WHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONEWHATHAVEIDONE",
     color: "#7b5230", shape: "poop", scale: 1
   }
