@@ -15,59 +15,59 @@
 // ============================================================
 
 export const ORGANS = {
-  heart:  { name: "Heart",   emoji: "❤️", color: "#e74c3c" },
-  brain:  { name: "Brain",   emoji: "🧠", color: "#9b59b6" },
-  bones:  { name: "Bones",   emoji: "🦴", color: "#ecf0f1" },
-  muscles:{ name: "Muscles", emoji: "💪", color: "#e67e22" },
-  eyes:   { name: "Eyes",    emoji: "👀", color: "#3498db" },
-  tummy:  { name: "Tummy",   emoji: "🫃", color: "#2ecc71" },
-  funny:  { name: "Funny",   emoji: "😂", color: "#f06292" }
+  love:  { name: "love",   emoji: "❤️", color: "#e74c3c" },
+  stupid:  { name: "Stupidity",   emoji: "🧠", color: "#9b59b6" },
+  sans:  { name: "Skeleton",   emoji: "🦴", color: "#ecf0f1" },
+  mspam:{ name: "MMMMMMMMMMMMMMM", emoji: "💪", color: "#e67e22" },
+  quote:   { name: "oh looky here, oh it's a wire, i am the best assistant! - toilet",    emoji: "👀", color: "#3498db" },
+  confusemoji:  { name: "why is this the pregnant man emoji",   emoji: "🫃", color: "#2ecc71" },
+  regret:  { name: "regret",   emoji: "😂", color: "#f06292" }
 };
 
 export const FOODS = [
   {
-    id: "apple", name: "Apple", emoji: "🍎", organ: "heart", xp: 10,
-    fact: "Apples have fiber that helps keep your heart healthy and pumping strong!",
+    id: "apple", name: "Apple", emoji: "🍎", organ: "love", xp: 10,
+    fact: "Apples have... apples and stuff idk",
     color: "#e74c3c", shape: "sphere", scale: 1
   },
   {
-    id: "carrot", name: "Carrot", emoji: "🥕", organ: "eyes", xp: 10,
-    fact: "Carrots are full of vitamin A, which helps your eyes see — even in the dark!",
+    id: "cannot", name: "cannot", emoji: "🥕", organ: "quote", xp: 10,
+    fact: "i cannot sleep",
     color: "#e67e22", shape: "carrot", scale: 1
   },
   {
-    id: "blueberry", name: "Blueberries", emoji: "🫐", organ: "brain", xp: 12,
-    fact: "Blueberries are brain berries! Their antioxidants help you think and remember.",
+    id: "blueberry", name: "Blueberries", emoji: "🫐", organ: "stupid", xp: 12,
+    fact: "Blueberries are not blue! grrrr the betrayal... you should not eat this becuase we boycott them ok",
     color: "#34495e", shape: "berry", scale: 1
   },
   {
-    id: "broccoli", name: "Broccoli", emoji: "🥦", organ: "bones", xp: 12,
-    fact: "Broccoli is a little tree with big power — calcium and vitamin K for strong bones!",
+    id: "justanoval", name: "Mr shy frog", emoji: "🥦", organ: "sans", xp: 12,
+    fact: "Mr. Shy Frog Oh how I've missed you I think that we should talk Every day",
     color: "#27ae60", shape: "broccoli", scale: 1
   },
   {
-    id: "banana", name: "Banana", emoji: "🍌", organ: "muscles", xp: 10,
-    fact: "Bananas have potassium that helps your muscles move and stops cramps!",
+    id: "notcarrot", name: "not carrot", emoji: "🍌", organ: "mspam", xp: 10,
+    fact: "this is not a carrot",
     color: "#f1c40f", shape: "carrot", scale: 0.9
   },
   {
-    id: "walnut", name: "Walnut", emoji: "🌰", organ: "brain", xp: 8,
-    fact: "Walnuts even look like tiny brains! Their healthy fats help your brain grow.",
+    id: "wallnut", name: "Wallnut", emoji: "🌰", organ: "stupid", xp: 8,
+    fact: "People wonder how I feel about getting constantly chewed on by zombies, says Wall-nut. What they don't realize is that with my limited senses all I can feel is a kind of tingling, like a relaxing backrub.",
     color: "#8d6e4a", shape: "nut", scale: 0.7
   },
   {
-    id: "orange", name: "Orange", emoji: "🍊", organ: "tummy", xp: 10,
-    fact: "Oranges have vitamin C that helps your body fight off germs and colds!",
+    id: "orange", name: "Orange", emoji: "🍊", organ: "confusemoji", xp: 10,
+    fact: "Vsauce here! Oranges have vitamin C that helps your body fight off germs and colds! or do they?",
     color: "#f39c12", shape: "sphere", scale: 0.9
   },
   {
-    id: "spinach", name: "Spinach", emoji: "🥬", organ: "muscles", xp: 12,
-    fact: "Spinach has iron that carries oxygen to your muscles — that's real superpower fuel!",
+    id: "justanoval2", name: "it's a seal", emoji: "🥬", organ: "mspam", xp: 12,
+    fact: "It's a seal coming down from my magical he is real dont you frown he cant live in the sea",
     color: "#1e8449", shape: "broccoli", scale: 0.8
   },
   {
-    id: "mushroom", name: "Mushroom", emoji: "🍄", organ: "tummy", xp: 8,
-    fact: "Mushrooms have vitamin D and fiber that keep your tummy happy and healthy.",
+    id: "pvz", name: "puffshroom", emoji: "🍄", organ: "tummy", xp: 8,
+    fact: "i dont wanna paste from pvz again i'm too lazy",
     color: "#d35400", shape: "mushroom", scale: 1
   },
   {
